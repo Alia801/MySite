@@ -1224,6 +1224,16 @@ nav.scrolled {
     color: white;
 }
 
+
+.allure-btn {
+    background: linear-gradient(135deg, #27c93f, #16a34a);
+    color: white;
+}
+
+.allure-btn:hover {
+    box-shadow: 0 0 20px rgba(39, 201, 63, 0.5);
+    transform: translateY(-2px);
+}
 .stress-btn:hover {
     box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
     transform: translateY(-2px);
@@ -1473,6 +1483,101 @@ nav.scrolled {
 .perf-score.good .score { color: #fbbf24; }
 .perf-score.poor .score { color: #f5576c; }
 
+
+
+.suite-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.suite-action {
+    background: rgba(139, 92, 246, 0.15);
+    color: var(--accent);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.suite-action:hover {
+    background: rgba(139, 92, 246, 0.3);
+}
+
+.test-check-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    user-select: none;
+}
+
+.test-check {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.test-check-label:hover {
+    color: var(--text-primary);
+}
+
+.test-list li {
+    padding: 0.15rem 0;
+}
+
+.test-list li:has(.test-check:checked) .test-icon {
+    color: #27c93f;
+}
+
+.test-list li:has(.test-check:not(:checked)) {
+    opacity: 0.45;
+}
+
+.test-list li:has(.test-check:not(:checked)) .test-icon {
+    color: var(--text-secondary);
+}
+.suite-select {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+    user-select: none;
+}
+
+.suite-check {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.test-suite-card.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+}
+
+.selected-btn {
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    color: white;
+}
+
+.selected-btn:hover {
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.6);
+    transform: translateY(-2px);
+}
 @media (max-width: 768px) {
     body { cursor: auto; }
     #custom-cursor, #cursor-trail { display: none; }

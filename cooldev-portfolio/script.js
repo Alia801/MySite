@@ -369,15 +369,15 @@ function initTestDashboard() {
     ];
 
     const uiTests = [
-        { name: 'Navigation — логотип NEON', duration: 200 },
+        { name: 'Navigation — логотип АЛЕНА', duration: 200 },
         { name: 'Navigation — все ссылки видны', duration: 150 },
         { name: 'Navigation — скролл навбара', duration: 300 },
         { name: 'Navigation — переход по ссылке', duration: 400 },
         { name: 'Navigation — AI кнопка', duration: 250 },
-        { name: 'Hero — заголовок Creative Developer', duration: 180 },
+        { name: 'Hero — заголовок QA Тестировщик', duration: 180 },
         { name: 'Hero — подзаголовок', duration: 120 },
         { name: 'Hero — CTA кнопки', duration: 140 },
-        { name: 'Hero — кнопка View Projects', duration: 350 },
+        { name: 'Hero — кнопка Все тесты', duration: 350 },
         { name: 'Hero — орбитальная система', duration: 160 },
         { name: 'Hero — core sphere', duration: 110 },
         { name: 'Hero — particles canvas', duration: 90 },
@@ -419,7 +419,7 @@ function initTestDashboard() {
         { name: 'Chatbot — Enter для отправки', duration: 280 },
         { name: 'Chatbot — typing индикатор', duration: 200 },
         { name: 'Chatbot — закрытие', duration: 180 },
-        { name: 'Chatbot — разные темы', duration: 600 },
+        { name: 'Chatbot — разные ответы', duration: 600 },
         { name: 'Responsive — hamburger меню', duration: 200 },
         { name: 'Responsive — скрытие ссылок', duration: 150 },
         { name: 'Responsive — открытие меню', duration: 250 },
@@ -688,4 +688,73 @@ function initTestDashboard() {
 
     loadBtn.addEventListener('click', () => runLoadTest(500, 50, 'load'));
     stressBtn.addEventListener('click', () => runLoadTest(2000, 100, 'stress'));
+
+    const suiteChecks = document.querySelectorAll('.suite-check');
+    const testChecks = document.querySelectorAll('.test-check');
+    const suiteActionBtns = document.querySelectorAll('.suite-action');
+    const selectedBtn = document.getElementById('run-selected-tests');
+
+    // Suite checkbox toggles all tests inside
+    suiteChecks.forEach(check => {
+        check.addEventListener('change', () => {
+            const suite = check.value;
+            const card = check.closest('.test-suite-card');
+            card.classList.toggle('selected', check.checked);
+            card.querySelectorAll('.test-check[data-suite="' + suite + '"]').forEach(tc => tc.checked = check.checked);
+        });
+        if (check.checked) check.closest('.test-suite-card').classList.add('selected');
+    });
+
+    // Individual test checkbox updates suite checkbox state
+    testChecks.forEach(check => {
+        check.addEventListener('change', () => {
+            const suite = check.dataset.suite;
+            const card = check.closest('.test-suite-card');
+            const suiteCheck = card.querySelector('.suite-check');
+            const all = card.querySelectorAll('.test-check[data-suite="' + suite + '"]');
+            const checked = card.querySelectorAll('.test-check[data-suite="' + suite + '"]:checked');
+            suiteCheck.checked = all.length === checked.length;
+            suiteCheck.indeterminate = checked.length > 0 && checked.length < all.length;
+        });
+    });
+
+    // Select All / Deselect All buttons
+    suiteActionBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const suite = btn.dataset.suite;
+            const action = btn.dataset.action;
+            const card = document.querySelector('.test-suite-card[data-suite="' + suite + '"]');
+            const suiteCheck = card.querySelector('.suite-check');
+            const checks = card.querySelectorAll('.test-check[data-suite="' + suite + '"]');
+            const select = action === 'select-all';
+            checks.forEach(c => c.checked = select);
+            suiteCheck.checked = select;
+            suiteCheck.indeterminate = false;
+            suiteCheck.closest('.test-suite-card').classList.toggle('selected', select);
+        });
+    });
+
+    // Run Selected: only run checked individual tests
+    selectedBtn.addEventListener('click', async () => {
+        const apiChecked = document.querySelectorAll('.test-check[data-suite="api"]:checked');
+        const uiChecked = document.querySelectorAll('.test-check[data-suite="ui"]:checked');
+        const loadChecked = document.querySelectorAll('.test-check[data-suite="load"]:checked');
+        const stressChecked = document.querySelectorAll('.test-check[data-suite="stress"]:checked');
+
+        const apiToRun = apiChecked.length > 0 ? apiTests.filter((_, i) => apiChecked[i]) : [];
+        const uiToRun = uiChecked.length > 0 ? uiTests.filter((_, i) => uiChecked[i]) : [];
+
+        if (apiToRun.length > 0) await runTests(apiToRun, 'api');
+        if (uiToRun.length > 0) {
+            if (apiToRun.length > 0) { addLine('', ''); addLine('─── UI Tests ───', 'info'); addLine('', ''); }
+            await runTests(uiToRun, 'ui');
+        }
+        if (loadChecked.length > 0) await runLoadTest(500, 50, 'load');
+        if (stressChecked.length > 0) await runLoadTest(2000, 100, 'stress');
+    });
+    const allureBtn = document.getElementById('open-allure-report');
+    allureBtn.addEventListener('click', () => {
+        window.open('allure-report/index.html', '_blank');
+    });
 }
